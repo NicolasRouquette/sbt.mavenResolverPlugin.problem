@@ -207,6 +207,25 @@ Somehow, SBT is looking for `maven-metadata.xml` in a URL that includes the vers
   [trace] Stack trace suppressed: run last *:update for the full output.
   [error] (*:update) sbt.ResolveException: unresolved dependency: org.example#library-bundle;1.0: java.text.ParseException: inconsistent module descriptor file found in 'https://cae-nexuspro.jpl.nasa.gov/nexus/service/local/repo_groups/jpl.beta.group/content/org/example/library-bundle/1.0/library-bundle-1.0.pom': bad artifact.kind found in https://cae-nexuspro.jpl.nasa.gov/nexus/service/local/repo_groups/jpl.beta.group/content/org/example/library-bundle/1.0/library-bundle-1.0.pom: expected='third_party.aggregate.libraries' found='null';
   [error] Total time: 5 s, completed Feb 16, 2016 4:26:38 PM
+  ```
+  
+  This demonstrates that extra properties in library dependencies don't work in the default configuration. To fix this, change [use.zip/build.sbt#L16-19](https://github.com/NicolasRouquette/sbt.mavenResolverPlugin.problem/blob/master/use.zip/build.sbt#L16) from:
+  
+       libraryDependencies += 
+       "org.example" % "library-bundle" % "1.0" % "compile" 
+       extra("artifact.kind" -> "third_party.aggregate.libraries")
+       artifacts Artifact("library-bundle", "zip", "zip", Some("resource"), Seq(), None, Map())
+
+  to:
+  
+       libraryDependencies += 
+       "org.example" % "library-bundle" % "1.0" % "compile" 
+       artifacts Artifact("library-bundle", "zip", "zip", Some("resource"), Seq(), None, Map())
+
+
+  Now, sbt will be happy:
+  
+  ```
   > reload
   [info] Loading global plugins from /home/rouquett/.sbt/0.13/plugins
   [info] Loading project definition from /opt/local/imce/users/nfr/github.nfr/sbt.mavenResolverPlugin.problem/use.zip/project
