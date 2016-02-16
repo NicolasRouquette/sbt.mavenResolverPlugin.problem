@@ -14,6 +14,8 @@ lazy val root = Project("bundleTest", file("."))
      scalaVersion := "2.11.7",
    
      libraryDependencies += 
-       "org.example" % "library-bundle" % "1.0" % "compile" artifacts
-       Artifact("library-bundle", "zip", "zip", Some("resource"), Seq(), None, Map())
+       "org.example" % "library-bundle" % "1.0" % "compile" 
+       extra("artifact.kind" -> "third_party.aggregate.libraries")
+       artifacts Artifact("library-bundle", "zip", "zip", Some("resource"), Seq(), None, Map())
+
   )
